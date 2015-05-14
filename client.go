@@ -137,12 +137,12 @@ func (sc *SailThruClient) CreateJob(jobType string, listName string, format stri
 }
 
 //GetJob Func that takes a jobID, which is returned by CreateJob and a format (json|xml) to get back the status of a CreateJob func call
-func (sc *SailThruClient) GetJob(jobID string, format string) (*Job, error) {
+func (sc *SailThruClient) GetJob(jobID string) (*Job, error) {
 	items := map[string]interface{}{"job_id": jobID}
 	jsonb := sc.getJSONBody(items)
 	data := map[string]string{"json": jsonb.Body}
 	sig := sc.getSigForJSONBody(data)
-	apiurl := fmt.Sprintf(apiURLGet, "job", jsonb.EscBody, sc.apiKey, sig, format)
+	apiurl := fmt.Sprintf(apiURLGet, "job", jsonb.EscBody, sc.apiKey, sig, "json")
 	res, _ := http.Get(apiurl)
 	output, _ := ioutil.ReadAll(res.Body)
 	job := Job{}
@@ -169,7 +169,7 @@ func (sc *SailThruClient) CreateJobAndReturnJob(jobType string, listName string,
 	start := time.Now()
 	for now := range timer {
 		_ = now
-		j, errJ := sc.GetJob(cjresp.JobID, format)
+		j, errJ := sc.GetJob(cjresp.JobID)
 		if errJ != nil {
 			return nil, errJ
 		}
