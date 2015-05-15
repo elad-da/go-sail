@@ -49,8 +49,12 @@ type jSONBody struct {
 	EscBody string
 }
 
+//DataStore : Interface that contains funcs to call the SailThruAPI
+type DataStore interface {
+}
+
 //NewSailThruClient func that creates a sailthruclient instance for calls to the SailThruAPI
-func NewSailThruClient(apiKey string, secretKey string) SailThruClient {
+func NewSailThruClient(ds DataStore, apiKey string, secretKey string) SailThruClient {
 	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v"}
 	return sc
 }
