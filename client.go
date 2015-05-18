@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var allowedJobTypes = map[string]string{"export_list_data": "export_list_data"}
+
 var apiURLGet = "https://api.sailthru.com/%v?json=%v&api_key=%v&sig=%v&format=%v"
 var apiURLPost = "https://api.sailthru.com/%v?format=%v"
 
@@ -21,6 +23,7 @@ type SailThruClient struct {
 	apiKey         string
 	secretKey      string
 	jsonhashstring string
+	httpClient     HTTPClienter
 }
 
 //Job struct that contains json marshalled data about a sailthru Job
@@ -49,13 +52,9 @@ type jSONBody struct {
 	EscBody string
 }
 
-//DataStore : Interface that contains funcs to call the SailThruAPI
-type DataStore interface {
-}
-
 //NewSailThruClient func that creates a sailthruclient instance for calls to the SailThruAPI
-func NewSailThruClient(ds DataStore, apiKey string, secretKey string) SailThruClient {
-	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v"}
+func NewSailThruClient(client HTTPClienter, apiKey string, secretKey string) SailThruClient {
+	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v", client}
 	return sc
 }
 
@@ -113,6 +112,9 @@ func (sc *SailThruClient) getPostForm(items map[string]interface{}) url.Values {
 //Keep in mind that CreateJob does not immediately return the contents of the job, it starts the job and returns a jobID.  The status of the job is checked via the GetJob func
 func (sc *SailThruClient) CreateJob(jobType string, listName string, format string) (*CreateJobResponse, error) {
 	r := CreateJobResponse{}
+	if _, ok := allowedJobTypes[jobType]; !ok {
+		return nil, fmt.Errorf("Invalid jobType: %v", jobType)
+	}
 	posturl := fmt.Sprintf(apiURLPost, "job", format)
 	items := map[string]interface{}{"job": jobType, "list": listName}
 	form := sc.getPostForm(items)
@@ -123,8 +125,7 @@ func (sc *SailThruClient) CreateJob(jobType string, listName string, format stri
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{}
-	resp, errDo := client.Do(req)
+	resp, errDo := sc.httpClient.Do(req)
 	if errDo != nil {
 		return nil, errDo
 	}
