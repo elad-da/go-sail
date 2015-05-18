@@ -80,7 +80,7 @@ func TestGetJobExpired(t *testing.T) {
 }
 
 func TestGetInvalidJobID(t *testing.T) {
-	expectedJobID := "555a468b975910683a63b667"
+	expectedJobID := "InvalidJobID"
 	mc := NewMockClient(InvalidJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
 	_, err := sc.GetJob(expectedJobID)
