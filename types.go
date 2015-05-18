@@ -31,7 +31,9 @@ func (c *HTTPClient) Get(url string) (*http.Response, error) {
 type mockType int
 
 const (
-	NormalCreateJob mockType = 1 + iota
+	NormalJob mockType = 1 + iota
+	ExpiredJob
+	InvalidJob
 )
 
 type nopCloser struct {
@@ -41,7 +43,9 @@ type nopCloser struct {
 func (nopCloser) Close() error { return nil }
 
 var mockTypes = [...]string{
-	"Normal Create Job",
+	"Normal Job",
+	"Expired Job",
+	"Invalid Job",
 }
 
 func (mt mockType) String() string {
@@ -78,7 +82,13 @@ func NewMockClient(mt mockType) MockClient {
 	switch mt {
 	case 1:
 		mc.doFunc = doNormal
-		mc.getFunc = getNormal
+		mc.getFunc = getNormalDownloadLink
+	case 2:
+		mc.doFunc = doNormal
+		mc.getFunc = getNormalExpiredJob
+	case 3:
+		mc.doFunc = doNormal
+		mc.getFunc = getInvalidJob
 	default:
 		panic("Woah!  This type doesn't work!")
 	}
@@ -105,6 +115,25 @@ func doNormal(req *http.Request) (*http.Response, error) {
 	return &resp, nil
 }
 
-func getNormal(url string) (*http.Response, error) {
-	return http.Get(url)
+func getNormalDownloadLink(url string) (*http.Response, error) {
+	resp := http.Response{}
+	respString := `{"job_id":"555a468b975910683a63b666","name":"Export All List Data: ad_hoc_test_list_1","list":"ad_hoc_test_list_1","status":"completed","start_time":"Mon, 18 May 2015 16:07:39 -0400","end_time":"Mon, 18 May 2015 16:07:40 -0400","filename":"ad_hoc_test_list_1.csv","export_url":"https:\/\/s3.amazonaws.com\/sailthru\/export\/2015\/05\/18\/4039cfa8f1d782f3af77b46388b55a5b"}`
+	resp.Body = nopCloser{bytes.NewBufferString(respString)}
+	return &resp, nil
+}
+
+func getNormalExpiredJob(url string) (*http.Response, error) {
+	resp := http.Response{}
+	respString := `{"job_id":"555a21e5a6cba8e27427eb23","name":"Export All List Data: ad_hoc_test_list_1","list":"ad_hoc_test_list_1","status":"completed","start_time":"Mon, 18 May 2015 13:31:17 -0400","end_time":"Mon, 18 May 2015 13:31:18 -0400","filename":"ad_hoc_test_list_1.csv","expired":true}`
+	resp.Body = nopCloser{bytes.NewBufferString(respString)}
+	return &resp, nil
+}
+
+func getInvalidJob(url string) (*http.Response, error) {
+	resp := http.Response{}
+	resp.StatusCode = 401
+	resp.Status = "401 Unauthorized"
+	respString := `{"error" : 99,"errormsg" : "Invalid Job ID: 555a468b975910683a63b667"}`
+	resp.Body = nopCloser{bytes.NewBufferString(respString)}
+	return &resp, nil
 }

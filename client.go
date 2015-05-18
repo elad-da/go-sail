@@ -148,11 +148,14 @@ func (sc *SailThruClient) GetJob(jobID string) (*Job, error) {
 	data := map[string]string{"json": jsonb.Body}
 	sig := sc.getSigForJSONBody(data)
 	apiurl := fmt.Sprintf(apiURLGet, "job", jsonb.EscBody, sc.apiKey, sig, "json")
-	res, _ := http.Get(apiurl)
+	res, errHTTP := sc.httpClient.Get(apiurl)
+	if errHTTP != nil {
+		return nil, errHTTP
+	}
 	output, _ := ioutil.ReadAll(res.Body)
 	job := Job{}
-	json.Unmarshal([]byte(output), &job)
-	return &job, nil
+	errJSON := json.Unmarshal([]byte(output), &job)
+	return &job, errJSON
 }
 
 //GetCSVData If the job has completed and it has not expired, this call will return the data in the CSV file the job created
