@@ -152,6 +152,10 @@ func (sc *SailThruClient) GetJob(jobID string) (*Job, error) {
 	if errHTTP != nil {
 		return nil, errHTTP
 	}
+	if res.StatusCode < 200 || res.StatusCode > 299 {
+		return nil, fmt.Errorf("Error Response: %v", res.Status)
+	}
+
 	output, _ := ioutil.ReadAll(res.Body)
 	job := Job{}
 	errJSON := json.Unmarshal([]byte(output), &job)

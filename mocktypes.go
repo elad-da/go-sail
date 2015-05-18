@@ -85,6 +85,8 @@ func getMapFromJSONForm(req *http.Request) (map[string]string, error) {
 
 func doNormal(req *http.Request) (*http.Response, error) {
 	resp := http.Response{}
+	resp.StatusCode = 200
+	resp.Status = "200 OK"
 	_, err := getMapFromJSONForm(req)
 	if err != nil {
 		return nil, err
@@ -96,6 +98,8 @@ func doNormal(req *http.Request) (*http.Response, error) {
 
 func getNormalDownloadLink(url string) (*http.Response, error) {
 	resp := http.Response{}
+	resp.StatusCode = 200
+	resp.Status = "200 OK"
 	respString := `{"job_id":"555a468b975910683a63b666","name":"Export All List Data: ad_hoc_test_list_1","list":"ad_hoc_test_list_1","status":"completed","start_time":"Mon, 18 May 2015 16:07:39 -0400","end_time":"Mon, 18 May 2015 16:07:40 -0400","filename":"ad_hoc_test_list_1.csv","export_url":"https:\/\/s3.amazonaws.com\/sailthru\/export\/2015\/05\/18\/4039cfa8f1d782f3af77b46388b55a5b"}`
 	resp.Body = nopCloser{bytes.NewBufferString(respString)}
 	return &resp, nil
@@ -103,6 +107,8 @@ func getNormalDownloadLink(url string) (*http.Response, error) {
 
 func getNormalExpiredJob(url string) (*http.Response, error) {
 	resp := http.Response{}
+	resp.StatusCode = 200
+	resp.Status = "200 OK"
 	respString := `{"job_id":"555a21e5a6cba8e27427eb23","name":"Export All List Data: ad_hoc_test_list_1","list":"ad_hoc_test_list_1","status":"completed","start_time":"Mon, 18 May 2015 13:31:17 -0400","end_time":"Mon, 18 May 2015 13:31:18 -0400","filename":"ad_hoc_test_list_1.csv","expired":true}`
 	resp.Body = nopCloser{bytes.NewBufferString(respString)}
 	return &resp, nil

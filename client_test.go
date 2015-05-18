@@ -83,11 +83,13 @@ func TestGetInvalidJobID(t *testing.T) {
 	expectedJobID := "555a468b975910683a63b667"
 	mc := NewMockClient(InvalidJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
-	j, err := sc.GetJob(expectedJobID)
+	_, err := sc.GetJob(expectedJobID)
 	if err != nil {
-		t.Error(err)
+		if err.Error() != "Error Response: 401 Unauthorized" {
+			t.Errorf("Expected 401 Unauthorized, got %v", err)
+		}
 	}
-	if j.JobID != expectedJobID {
-		t.Errorf("Expected %v, got %v\n", expectedJobID, j.JobID)
+	if err == nil {
+		t.Errorf("This should have returned an error, 401 Unauthorized")
 	}
 }
