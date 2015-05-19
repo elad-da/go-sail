@@ -2,7 +2,7 @@
 
 `go-sail` is a client written in Go (golang) that communicates with the [SailThru API](https://api.sailthru.com).
 
-To include in your project, `git clone` the repo to your $GOPATH.  Put the following in your import section:
+To include in your project, `git clone` the repo to your $GOPATH.  Put the following in the import section of the package that will make use of `go-sail`:
 
 ```go
   import (
