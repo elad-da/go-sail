@@ -14,8 +14,10 @@ You can instantiate a go-client like this:
 
 ```go
 httpClient := gosail.HTTPClient{}
-sc := gosail.NewSailThruClient(&httpClient, "YourAPIKey", "YourSecretKey")
+sc := gosail.NewSailThruClient(&httpClient, "YourAPIKey", "YourSecretKey", nil)
 ```
+The last argument value `nil` is to be used if the baseURL for the sailthru notify changes.
+To use the default, pass `nil`.  To give a different base URL, base a string pointer instead.
 
 To create a Job:
 
