@@ -2,6 +2,9 @@ package gosail
 
 import (
 	"flag"
+	"fmt"
+	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -91,5 +94,51 @@ func TestGetInvalidJobID(t *testing.T) {
 	}
 	if err == nil {
 		t.Errorf("This should have returned an error, 401 Unauthorized")
+	}
+}
+
+func TestGetNormalCSV(t *testing.T) {
+	exportURL := "https://s3.amazonaws.com/sailthru/export/2015/05/19/5642edc42c1fc493114a287e121dd7a4"
+	expectedUserIDs := []int{10, 3, 5, 4, 6, 7, 8, 2, 1, 9}
+	mc := NewMockClient(NormalCSV)
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	data, err := sc.GetCSVData(exportURL)
+	if err != nil {
+		t.Error(err)
+	}
+	if data == nil {
+		t.Error("Result data should not be nil")
+	}
+	lines := strings.Split(string(data), "\n")
+	if len(lines) == 0 {
+		t.Error("There should be at least 1 line returned")
+	}
+	topLine := lines[0]
+	var userCol int = -1
+	for k, v := range strings.Split(topLine, ",") {
+		if v == "userid" {
+			userCol = k
+			break
+		}
+	}
+	if userCol < 0 {
+		t.Error("`userid` was not returned in the CSV header row")
+	}
+	userIDs := []int{}
+	for k, line := range strings.Split(string(data), "\n") {
+		if k > 0 {
+			cols := strings.Split(line, ",")
+			if len(cols) >= userCol {
+				userID, convErr := strconv.Atoi(cols[userCol])
+				if convErr != nil {
+					t.Error(convErr)
+					break
+				}
+				userIDs = append(userIDs, userID)
+			}
+		}
+	}
+	if fmt.Sprintf("%v", userIDs) != fmt.Sprintf("%v", expectedUserIDs) {
+		t.Errorf("Expected %v, got %v\n", expectedUserIDs, userIDs)
 	}
 }
