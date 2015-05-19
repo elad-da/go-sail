@@ -15,6 +15,7 @@ import (
 
 var allowedJobTypes = map[string]string{"export_list_data": "export_list_data"}
 
+var apiBaseURL = "https://api.sailthru.com"
 var apiURLGet = "https://api.sailthru.com/%v?json=%v&api_key=%v&sig=%v&format=%v"
 var apiURLPost = "https://api.sailthru.com/%v?format=%v"
 
@@ -24,6 +25,7 @@ type SailThruClient struct {
 	secretKey      string
 	jsonhashstring string
 	httpClient     HTTPClienter
+	baseURL        string
 }
 
 //Job struct that contains json marshalled data about a sailthru Job
@@ -53,8 +55,12 @@ type jSONBody struct {
 }
 
 //NewSailThruClient func that creates a sailthruclient instance for calls to the SailThruAPI
-func NewSailThruClient(client HTTPClienter, apiKey string, secretKey string) SailThruClient {
-	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v", client}
+func NewSailThruClient(client HTTPClienter, apiKey string, secretKey string, baseURL *string) SailThruClient {
+	if baseURL != nil {
+		apiBaseURL = *baseURL
+	}
+
+	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v", client, apiBaseURL}
 	return sc
 }
 

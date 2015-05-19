@@ -25,7 +25,7 @@ func TestFlag(t *testing.T) {
 func TestCreateJob(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
 	mc := NewMockClient(NormalJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
 	if err != nil {
 		t.Error(err)
@@ -38,7 +38,7 @@ func TestCreateJob(t *testing.T) {
 func TestCreateInvalidJobType(t *testing.T) {
 	expectedErrorStr := "Invalid jobType: invalid_job_type"
 	mc := NewMockClient(NormalJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 
 	_, err := sc.CreateJob("invalid_job_type", "ad_hoc_test_list_1", "json")
 	if err == nil {
@@ -53,7 +53,7 @@ func TestCreateInvalidJobType(t *testing.T) {
 func TestGetJobDownloadLink(t *testing.T) {
 	expectedJobID := "555a468b975910683a63b666"
 	mc := NewMockClient(NormalJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	j, err := sc.GetJob(expectedJobID)
 	if err != nil {
 		t.Error(err)
@@ -66,7 +66,7 @@ func TestGetJobDownloadLink(t *testing.T) {
 func TestGetJobExpired(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
 	mc := NewMockClient(ExpiredJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	r, err := sc.GetJob(expectedJobID)
 	if err != nil {
 		t.Error(err)
@@ -82,7 +82,7 @@ func TestGetJobExpired(t *testing.T) {
 func TestGetInvalidJobID(t *testing.T) {
 	expectedJobID := "InvalidJobID"
 	mc := NewMockClient(InvalidJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey")
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	_, err := sc.GetJob(expectedJobID)
 	if err != nil {
 		if err.Error() != "Error Response: 401 Unauthorized" {
