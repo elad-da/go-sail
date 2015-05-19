@@ -10,10 +10,10 @@ import (
 type mockType int
 
 const (
-	NormalJob mockType = 1 + iota
-	ExpiredJob
-	InvalidJob
-	NormalCSV
+	normalJob mockType = 1 + iota
+	expiredJob
+	invalidJob
+	normalCSV
 )
 
 type nopCloser struct {

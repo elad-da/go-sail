@@ -59,7 +59,6 @@ func NewSailThruClient(client HTTPClienter, apiKey string, secretKey string, bas
 	if baseURL != nil {
 		apiBaseURL = *baseURL
 	}
-
 	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v", client, apiBaseURL}
 	return sc
 }

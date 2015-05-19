@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
 	"testing"
 )
 
@@ -27,7 +28,7 @@ func TestFlag(t *testing.T) {
 
 func TestCreateJob(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
-	mc := NewMockClient(NormalJob)
+	mc := NewMockClient(normalJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
 	if err != nil {
@@ -40,7 +41,7 @@ func TestCreateJob(t *testing.T) {
 
 func TestCreateInvalidJobType(t *testing.T) {
 	expectedErrorStr := "Invalid jobType: invalid_job_type"
-	mc := NewMockClient(NormalJob)
+	mc := NewMockClient(normalJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 
 	_, err := sc.CreateJob("invalid_job_type", "ad_hoc_test_list_1", "json")
@@ -55,7 +56,7 @@ func TestCreateInvalidJobType(t *testing.T) {
 
 func TestGetJobDownloadLink(t *testing.T) {
 	expectedJobID := "555a468b975910683a63b666"
-	mc := NewMockClient(NormalJob)
+	mc := NewMockClient(normalJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	j, err := sc.GetJob(expectedJobID)
 	if err != nil {
@@ -68,7 +69,7 @@ func TestGetJobDownloadLink(t *testing.T) {
 
 func TestGetJobExpired(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
-	mc := NewMockClient(ExpiredJob)
+	mc := NewMockClient(expiredJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	r, err := sc.GetJob(expectedJobID)
 	if err != nil {
@@ -84,7 +85,7 @@ func TestGetJobExpired(t *testing.T) {
 
 func TestGetInvalidJobID(t *testing.T) {
 	expectedJobID := "InvalidJobID"
-	mc := NewMockClient(InvalidJob)
+	mc := NewMockClient(invalidJob)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	_, err := sc.GetJob(expectedJobID)
 	if err != nil {
@@ -100,7 +101,7 @@ func TestGetInvalidJobID(t *testing.T) {
 func TestGetNormalCSV(t *testing.T) {
 	exportURL := "https://s3.amazonaws.com/sailthru/export/2015/05/19/5642edc42c1fc493114a287e121dd7a4"
 	expectedUserIDs := []int{10, 3, 5, 4, 6, 7, 8, 2, 1, 9}
-	mc := NewMockClient(NormalCSV)
+	mc := NewMockClient(normalCSV)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
 	data, err := sc.GetCSVData(exportURL)
 	if err != nil {
@@ -114,7 +115,7 @@ func TestGetNormalCSV(t *testing.T) {
 		t.Error("There should be at least 1 line returned")
 	}
 	topLine := lines[0]
-	var userCol int = -1
+	var userCol = -1
 	for k, v := range strings.Split(topLine, ",") {
 		if v == "userid" {
 			userCol = k
