@@ -114,7 +114,7 @@ func TestGetInvalidJobID(t *testing.T) {
 }
 
 func TestGetNormalCSV(t *testing.T) {
-	exportURL := "https://s3.amazonaws.com/sailthru/export/2015/05/19/5642edc42c1fc493114a287e121dd7a4"
+	exportURL := "https://s3.amazonaws.com/sailthru/export/2015/05/19/UNIQUE_FILE_ID"
 	expectedUserIDs := []int{10, 3, 5, 4, 6, 7, 8, 2, 1, 9}
 	mc := NewMockClient(normalCSV)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
