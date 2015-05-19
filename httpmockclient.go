@@ -14,6 +14,7 @@ const (
 	expiredJob
 	invalidJob
 	normalCSV
+	invalidJSON
 )
 
 type nopCloser struct {
@@ -27,6 +28,7 @@ var mockTypes = [...]string{
 	"Expired Job",
 	"Invalid Job",
 	"Normal CSV",
+	"Invalid JSON",
 }
 
 func (mt mockType) String() string {
@@ -73,6 +75,9 @@ func NewMockClient(mt mockType) MockClient {
 	case 4:
 		mc.doFunc = doNormal
 		mc.getFunc = getNormalCSV
+	case 5:
+		mc.doFunc = doNormal
+		mc.getFunc = getInvalidJSONDownloadLink
 	default:
 		panic("Woah!  This type doesn't work!")
 	}
@@ -106,6 +111,15 @@ func getNormalDownloadLink(url string) (*http.Response, error) {
 	resp.StatusCode = 200
 	resp.Status = "200 OK"
 	respString := `{"job_id":"555a468b975910683a63b666","name":"Export All List Data: ad_hoc_test_list_1","list":"ad_hoc_test_list_1","status":"completed","start_time":"Mon, 18 May 2015 16:07:39 -0400","end_time":"Mon, 18 May 2015 16:07:40 -0400","filename":"ad_hoc_test_list_1.csv","export_url":"https:\/\/s3.amazonaws.com\/sailthru\/export\/2015\/05\/18\/4039cfa8f1d782f3af77b46388b55a5b"}`
+	resp.Body = nopCloser{bytes.NewBufferString(respString)}
+	return &resp, nil
+}
+
+func getInvalidJSONDownloadLink(url string) (*http.Response, error) {
+	resp := http.Response{}
+	resp.StatusCode = 200
+	resp.Status = "200 OK"
+	respString := `{"job_id":"555a468b975910683a63b666","name":"Export All List Data: ad_hoc_test_list_1","list":"ad_hoc_test_list_1","status":false,"start_time":"Mon, 18 May 2015 16:07:39 -0400","end_time":"Mon, 18 May 2015 16:07:40 -0400","filename":"ad_hoc_test_list_1.csv","export_url":"https:\/\/s3.amazonaws.com\/sailthru\/export\/2015\/05\/18\/4039cfa8f1d782f3af77b46388b55a5b"}`
 	resp.Body = nopCloser{bytes.NewBufferString(respString)}
 	return &resp, nil
 }

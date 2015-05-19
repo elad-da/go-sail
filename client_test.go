@@ -67,6 +67,21 @@ func TestGetJobDownloadLink(t *testing.T) {
 	}
 }
 
+func TestGetJobInvalidJSON(t *testing.T) {
+	expectedJobID := "555a468b975910683a63b666"
+	expectedErrorStr := "json: cannot unmarshal bool into Go value of type string"
+	mc := NewMockClient(invalidJSON)
+	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	_, err := sc.GetJob(expectedJobID)
+	if err == nil {
+		t.Errorf("Expected %v, got %v\n", expectedErrorStr, nil)
+	} else {
+		if err.Error() != expectedErrorStr {
+			t.Errorf("Expected %v, got %v\n", expectedErrorStr, err.Error())
+		}
+	}
+}
+
 func TestGetJobExpired(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
 	mc := NewMockClient(expiredJob)
