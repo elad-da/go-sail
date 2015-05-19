@@ -39,7 +39,7 @@ Use the jobID to check the status:
 job, jobErr := sc.GetJob(jobItem.JobID)
 ```
 
-The `job` variable is an instace of the `Job` struct:
+The `job` variable is an instance of the `Job` struct:
 
 ```go
 type Job struct {
