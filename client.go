@@ -49,7 +49,7 @@ type CreateJobResponse struct {
 	Status string `json:"status"`
 }
 
-type jSONBody struct {
+type bodyJSON struct {
 	Body    string
 	EscBody string
 }
@@ -88,8 +88,8 @@ func (sc *SailThruClient) getJSONStringBody(items map[string]interface{}) string
 	return string(jsonparams)
 }
 
-func (sc *SailThruClient) getJSONBody(data map[string]interface{}) jSONBody {
-	b := jSONBody{}
+func (sc *SailThruClient) getJSONBody(data map[string]interface{}) bodyJSON {
+	b := bodyJSON{}
 	b.Body = sc.getJSONStringBody(data)
 	b.EscBody = url.QueryEscape(b.Body)
 	return b
