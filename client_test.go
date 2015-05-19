@@ -3,6 +3,7 @@ package gosail
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
 
@@ -118,12 +119,16 @@ func TestGetNormalCSV(t *testing.T) {
 	expectedUserIDs := []int{10, 3, 5, 4, 6, 7, 8, 2, 1, 9}
 	mc := NewMockClient(normalCSV)
 	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
-	data, err := sc.GetCSVData(exportURL)
+	r, err := sc.GetCSVData(exportURL)
 	if err != nil {
 		t.Error(err)
 	}
-	if data == nil {
+	if r == nil {
 		t.Error("Result data should not be nil")
+	}
+	data, readErr := ioutil.ReadAll(r)
+	if readErr != nil {
+		t.Error(readErr)
 	}
 	lines := strings.Split(string(data), "\n")
 	if len(lines) == 0 {

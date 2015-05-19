@@ -168,16 +168,16 @@ func (sc *SailThruClient) GetJob(jobID string) (*Job, error) {
 }
 
 //GetCSVData If the job has completed and it has not expired, this call will return the data in the CSV file the job created
-func (sc *SailThruClient) GetCSVData(path string) ([]byte, error) {
+func (sc *SailThruClient) GetCSVData(path string) (io.ReadCloser, error) {
 	res, errGet := sc.httpClient.Get(path)
 	if errGet != nil {
 		return nil, errGet
 	}
-	return ioutil.ReadAll(res.Body)
+	return res.Body, nil
 }
 
 //CreateJobAndReturnJob This will create the job, and then return the contents of the job, providing it does not timeout(value is seconds)
-func (sc *SailThruClient) CreateJobAndReturnJob(jobType string, listName string, format string, timeout int) ([]byte, error) {
+func (sc *SailThruClient) CreateJobAndReturnJob(jobType string, listName string, format string, timeout int) (io.ReadCloser, error) {
 	cjresp, err := sc.CreateJob(jobType, listName, format)
 	if err != nil {
 		return nil, err
