@@ -2,6 +2,17 @@
 
 `go-sail` is a client written in Go (golang) that communicates with the [SailThru API](https://api.sailthru.com).
 
+----------
+Currently, the client only allows for:
+
+ 1. [Creating](http://getstarted.sailthru.com/new-for-developers-overview/reporting/job/#POST) a job
+  1. Currently the only job type allowed is [`export_list_data`](http://getstarted.sailthru.com/new-for-developers-overview/reporting/job/#export_list_data)
+ 1. [Checking](http://getstarted.sailthru.com/new-for-developers-overview/reporting/job/#GET) of the job's status
+ 1. Return of the job's data once it has completed.  
+
+More features to come.
+
+----------
 To include in your project, `git clone` the repo to your $GOPATH.  Put the following in the import section of the package that will make use of `go-sail`:
 
 ```go
@@ -57,7 +68,7 @@ type Job struct {
 }
 ```
 
-If the Status is complete and expired is `false`, then the  JobID can be used to download the data from the job:
+If the Status is complete and expired is `false`, then the JobID can be used to download the data from the job:
 
 ```go
 data, dataErr := sc.GetCSVData(job.JobID)
@@ -65,4 +76,4 @@ data, dataErr := sc.GetCSVData(job.JobID)
 
 `GetCSVData` returns a `byte` slice that, if converted to a string, would look like data from a CSV file.
 
-To run tests, run `go-test` inside the **go-sail** directory.
+To run tests, run `go test` inside the **go-sail** directory.
