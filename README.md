@@ -13,8 +13,8 @@ To include in your project, `git clone` the repo to your $GOPATH.  Put the follo
 You can instantiate a go-client like this:
 
 ```go
-        httpClient := gosail.HTTPClient{}
-				sc := gosail.NewSailThruClient(&httpClient, "YourAPIKey", "YourSecretKey")
+httpClient := gosail.HTTPClient{}
+sc := gosail.NewSailThruClient(&httpClient, "YourAPIKey", "YourSecretKey")
 ```
 
 To create a Job:
