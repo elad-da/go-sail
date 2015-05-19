@@ -170,7 +170,7 @@ func (sc *SailThruClient) GetJob(jobID string) (*Job, error) {
 
 //GetCSVData If the job has completed and it has not expired, this call will return the data in the CSV file the job created
 func (sc *SailThruClient) GetCSVData(path string) ([]byte, error) {
-	res, errGet := http.Get(path)
+	res, errGet := sc.httpClient.Get(path)
 	if errGet != nil {
 		return nil, errGet
 	}
