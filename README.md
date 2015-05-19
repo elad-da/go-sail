@@ -10,7 +10,7 @@ To include in your project, `git clone` the repo to your $GOPATH.  Put the follo
     )
 ```
 
-You can instantiate a go-client like this:
+You can instantiate a SailThru client like this:
 
 ```go
 httpClient := gosail.HTTPClient{}
