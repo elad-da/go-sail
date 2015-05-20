@@ -21,16 +21,27 @@ To include in your project, `git clone` the repo to your $GOPATH.  Put the follo
     )
 ```
 
-You can instantiate a SailThru client like this:
+Instantiate a go-sail client:
+----------
+
+Setup the `APIConfig` struct:
+ ```go
+  c := APIConfig{}
+	c.APIKey = "TestAPIKey"
+	c.SecretKey = "TestSecretKey"
+	c.BaseURL = "https://api.sailthru.com"
+  ```
+
+Then pass that to the `NewSailThruClient` along with a in instance of HTTPClient:
 
 ```go
 httpClient := gosail.HTTPClient{}
-sc := gosail.NewSailThruClient(&httpClient, "YourAPIKey", "YourSecretKey", nil)
+sc := gosail.NewSailThruClient(&httpClient, c)
 ```
-The last argument value `nil` is to be used if the baseURL for the sailthru notify changes.
-To use the default, pass `nil`.  To give a different base URL, base a string pointer instead.
 
-To create a Job:
+
+Create a Job:
+----------
 
 ```go
 resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
@@ -68,12 +79,27 @@ type Job struct {
 }
 ```
 
-If the Status is complete and expired is `false`, then the JobID can be used to download the data from the job:
+
+Download the data:
+----------
+If the `Status` is `complete` and `expired` is `false`, then the `JobID` can be used to download the data from the job:
 
 ```go
 data, dataErr := sc.GetCSVData(job.JobID)
 ```
 
-`GetCSVData` returns a `byte` slice that, if converted to a string, would look like data from a CSV file.
+`GetCSVData` returns an `io.ReadCloser` that, can be converted to a `slice` of `string` like so:
+
+```go
+//r is the returned io.ReadCloser from GetCSVData
+data, readErr := ioutil.ReadAll(r)
+if readErr != nil {
+  //Handle the error as you see fit.
+}
+lines := strings.Split(string(data), "\n")
+```
+
+
+----------
 
 To run tests, run `go test` inside the **go-sail** directory.
