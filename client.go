@@ -49,17 +49,22 @@ type CreateJobResponse struct {
 	Status string `json:"status"`
 }
 
+//APIConfig : struct that holds keys, url info for the SailThruAPI calls
+type APIConfig struct {
+	APIKey    string
+	SecretKey string
+	BaseURL   string
+}
+
 type bodyJSON struct {
 	Body    string
 	EscBody string
 }
 
 //NewSailThruClient func that creates a sailthruclient instance for calls to the SailThruAPI
-func NewSailThruClient(client HTTPClienter, apiKey string, secretKey string, baseURL *string) SailThruClient {
-	if baseURL != nil {
-		apiBaseURL = *baseURL
-	}
-	sc := SailThruClient{apiKey, secretKey, "%v%vjson%v", client, apiBaseURL}
+func NewSailThruClient(client HTTPClienter, config APIConfig) SailThruClient {
+
+	sc := SailThruClient{config.APIKey, config.SecretKey, "%v%vjson%v", client, config.BaseURL}
 	return sc
 }
 

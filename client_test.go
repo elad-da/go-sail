@@ -27,10 +27,19 @@ func TestFlag(t *testing.T) {
 	checkKeys(t)
 }
 
+func getTestConfig() APIConfig {
+	c := APIConfig{}
+	c.APIKey = "TestAPIKey"
+	c.SecretKey = "TestSecretKey"
+	c.BaseURL = "https://api.sailthru.com"
+	return c
+}
+
 func TestCreateJob(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
 	mc := NewMockClient(normalJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 	resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
 	if err != nil {
 		t.Error(err)
@@ -43,7 +52,8 @@ func TestCreateJob(t *testing.T) {
 func TestCreateInvalidJobType(t *testing.T) {
 	expectedErrorStr := "Invalid jobType: invalid_job_type"
 	mc := NewMockClient(normalJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 
 	_, err := sc.CreateJob("invalid_job_type", "ad_hoc_test_list_1", "json")
 	if err == nil {
@@ -58,7 +68,8 @@ func TestCreateInvalidJobType(t *testing.T) {
 func TestGetJobDownloadLink(t *testing.T) {
 	expectedJobID := "555a468b975910683a63b666"
 	mc := NewMockClient(normalJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 	j, err := sc.GetJob(expectedJobID)
 	if err != nil {
 		t.Error(err)
@@ -72,7 +83,8 @@ func TestGetJobInvalidJSON(t *testing.T) {
 	expectedJobID := "555a468b975910683a63b666"
 	expectedErrorStr := "json: cannot unmarshal"
 	mc := NewMockClient(invalidJSON)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 	_, err := sc.GetJob(expectedJobID)
 	if err == nil {
 		t.Errorf("Expected %v, got %v\n", expectedErrorStr, nil)
@@ -86,7 +98,8 @@ func TestGetJobInvalidJSON(t *testing.T) {
 func TestGetJobExpired(t *testing.T) {
 	expectedJobID := "555a21e5a6cba8e27427eb23"
 	mc := NewMockClient(expiredJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 	r, err := sc.GetJob(expectedJobID)
 	if err != nil {
 		t.Error(err)
@@ -102,7 +115,8 @@ func TestGetJobExpired(t *testing.T) {
 func TestGetInvalidJobID(t *testing.T) {
 	expectedJobID := "InvalidJobID"
 	mc := NewMockClient(invalidJob)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 	_, err := sc.GetJob(expectedJobID)
 	if err != nil {
 		if err.Error() != "Error Response: 401 Unauthorized" {
@@ -118,7 +132,8 @@ func TestGetNormalCSV(t *testing.T) {
 	exportURL := "https://s3.amazonaws.com/sailthru/export/2015/05/19/UNIQUE_FILE_ID"
 	expectedUserIDs := []int{10, 3, 5, 4, 6, 7, 8, 2, 1, 9}
 	mc := NewMockClient(normalCSV)
-	sc := NewSailThruClient(&mc, "TestAPIKey", "TestSecretKey", nil)
+	c := getTestConfig()
+	sc := NewSailThruClient(&mc, c)
 	r, err := sc.GetCSVData(exportURL)
 	if err != nil {
 		t.Error(err)
