@@ -16,8 +16,8 @@ import (
 var allowedJobTypes = map[string]string{"export_list_data": "export_list_data"}
 
 var apiBaseURL = "https://api.sailthru.com"
-var apiURLGet = "https://api.sailthru.com/%v?json=%v&api_key=%v&sig=%v&format=%v"
-var apiURLPost = "https://api.sailthru.com/%v?format=%v"
+var apiURLGet = "%v/%v?json=%v&api_key=%v&sig=%v&format=%v"
+var apiURLPost = "%v/%v?format=%v"
 
 //SailThruClient Struct that contains key & hashing locations for sailthru calls
 type SailThruClient struct {
@@ -63,7 +63,6 @@ type bodyJSON struct {
 
 //NewSailThruClient func that creates a sailthruclient instance for calls to the SailThruAPI
 func NewSailThruClient(client HTTPClienter, config APIConfig) SailThruClient {
-
 	sc := SailThruClient{config.APIKey, config.SecretKey, "%v%vjson%v", client, config.BaseURL}
 	return sc
 }
@@ -125,7 +124,7 @@ func (sc *SailThruClient) CreateJob(jobType string, listName string, format stri
 	if _, ok := allowedJobTypes[jobType]; !ok {
 		return nil, fmt.Errorf("Invalid jobType: %v", jobType)
 	}
-	posturl := fmt.Sprintf(apiURLPost, "job", format)
+	posturl := fmt.Sprintf(apiURLPost, sc.baseURL, "job", format)
 	items := map[string]interface{}{"job": jobType, "list": listName}
 	form := sc.getPostForm(items)
 
@@ -157,7 +156,7 @@ func (sc *SailThruClient) GetJob(jobID string) (*Job, error) {
 	jsonb := sc.getJSONBody(items)
 	data := map[string]string{"json": jsonb.Body}
 	sig := sc.getSigForJSONBody(data)
-	apiurl := fmt.Sprintf(apiURLGet, "job", jsonb.EscBody, sc.apiKey, sig, "json")
+	apiurl := fmt.Sprintf(apiURLGet, sc.baseURL, "job", jsonb.EscBody, sc.apiKey, sig, "json")
 	res, errHTTP := sc.httpClient.Get(apiurl)
 	if errHTTP != nil {
 		return nil, errHTTP
