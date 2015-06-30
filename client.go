@@ -125,7 +125,7 @@ func (sc *SailThruClient) CreateJob(jobType string, listName string, format stri
 		return nil, fmt.Errorf("Invalid jobType: %v", jobType)
 	}
 	posturl := fmt.Sprintf(apiURLPost, sc.baseURL, "job", format)
-	items := map[string]interface{}{"job": jobType, "list": listName}
+	items := map[string]interface{}{"job": jobType, "list": listName, "fields": "vars"}
 	form := sc.getPostForm(items)
 
 	req, reqErr := http.NewRequest("POST", posturl, bytes.NewBufferString(form.Encode()))
