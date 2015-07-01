@@ -121,9 +121,6 @@ func (sc *SailThruClient) getPostForm(items map[string]interface{}) url.Values {
 //Keep in mind that CreateJob does not immediately return the contents of the job, it starts the job and returns a jobID.  The status of the job is checked via the GetJob func
 func (sc *SailThruClient) CreateJob(jobType string, listName string, fields map[string]map[string]interface{}, format string) (*CreateJobResponse, error) {
 
-	// vars := map[string]int{"user_id": 1}
-	// fieldValues := map[string]map[string]int{"vars": vars}
-	//
 	r := CreateJobResponse{}
 	if _, ok := allowedJobTypes[jobType]; !ok {
 		return nil, fmt.Errorf("Invalid jobType: %v", jobType)
