@@ -125,9 +125,21 @@ func (sc *SailThruClient) CreateJob(jobType string, listName string, format stri
 		return nil, fmt.Errorf("Invalid jobType: %v", jobType)
 	}
 	posturl := fmt.Sprintf(apiURLPost, sc.baseURL, "job", format)
-	items := map[string]interface{}{"job": jobType, "list": listName, "fields": "vars"}
+	/*
+			{
+		   "job":"export_list_data",
+		   "list":"adhoc_3",
+		   "fields":{
+		      "vars":{
+		         "user_id":1
+		      }
+		   }
+		}
+	*/
+	vars := map[string]int{"user_id": 1}
+	fieldValues := map[string]map[string]int{"vars": vars}
+	items := map[string]interface{}{"job": jobType, "list": listName, "fields": fieldValues}
 	form := sc.getPostForm(items)
-
 	req, reqErr := http.NewRequest("POST", posturl, bytes.NewBufferString(form.Encode()))
 	if reqErr != nil {
 		return nil, reqErr

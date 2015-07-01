@@ -43,6 +43,7 @@ func TestCreateJob(t *testing.T) {
 	resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
 	if err != nil {
 		t.Error(err)
+		t.FailNow()
 	}
 	if resp.JobID != expectedJobID {
 		t.Errorf("Expected %v, got %v\n", expectedJobID, resp.JobID)
