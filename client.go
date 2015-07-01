@@ -119,21 +119,18 @@ func (sc *SailThruClient) getPostForm(items map[string]interface{}) url.Values {
 
 //CreateJob Func that creates a sailthru job.  Call must specify the type of job, the name of the list and the format of the returned data (json|xml)
 //Keep in mind that CreateJob does not immediately return the contents of the job, it starts the job and returns a jobID.  The status of the job is checked via the GetJob func
-func (sc *SailThruClient) CreateJob(jobType string, listName string, format string) (*CreateJobResponse, error) {
+func (sc *SailThruClient) CreateJob(jobType string, listName string, fields map[string]map[string]interface{}, format string) (*CreateJobResponse, error) {
+
+	// vars := map[string]int{"user_id": 1}
+	// fieldValues := map[string]map[string]int{"vars": vars}
+	//
 	r := CreateJobResponse{}
 	if _, ok := allowedJobTypes[jobType]; !ok {
 		return nil, fmt.Errorf("Invalid jobType: %v", jobType)
 	}
 	posturl := fmt.Sprintf(apiURLPost, sc.baseURL, "job", format)
-	/*
-		  TODO:
-			vars needs a different name
-			fieldValues needs to be injected form the CreateJob, not hard coded here.
-	*/
-	vars := map[string]int{"user_id": 1}
-	fieldValues := map[string]map[string]int{"vars": vars}
 
-	items := map[string]interface{}{"job": jobType, "list": listName, "fields": fieldValues}
+	items := map[string]interface{}{"job": jobType, "list": listName, "fields": fields}
 	form := sc.getPostForm(items)
 	req, reqErr := http.NewRequest("POST", posturl, bytes.NewBufferString(form.Encode()))
 	if reqErr != nil {
@@ -188,8 +185,8 @@ func (sc *SailThruClient) GetCSVData(path string) (io.ReadCloser, error) {
 }
 
 //CreateJobAndReturnJob This will create the job, and then return the contents of the job, providing it does not timeout(value is seconds)
-func (sc *SailThruClient) CreateJobAndReturnJob(jobType string, listName string, format string, timeout int) (io.ReadCloser, error) {
-	cjresp, err := sc.CreateJob(jobType, listName, format)
+func (sc *SailThruClient) CreateJobAndReturnJob(jobType string, listName string, fields map[string]map[string]interface{}, format string, timeout int) (io.ReadCloser, error) {
+	cjresp, err := sc.CreateJob(jobType, listName, fields, format)
 	if err != nil {
 		return nil, err
 	}
