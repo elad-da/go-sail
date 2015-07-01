@@ -84,8 +84,8 @@ func NewMockClient(mt mockType) MockClient {
 	return mc
 }
 
-func getMapFromJSONForm(req *http.Request) (map[string]string, error) {
-	jsonMap := make(map[string]string)
+func getMapFromJSONForm(req *http.Request) (map[string]interface{}, error) {
+	jsonMap := make(map[string]interface{})
 	errJSON := json.Unmarshal([]byte(req.FormValue("json")), &jsonMap)
 	if errJSON != nil {
 		return nil, errJSON

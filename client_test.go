@@ -40,9 +40,13 @@ func TestCreateJob(t *testing.T) {
 	mc := NewMockClient(normalJob)
 	c := getTestConfig()
 	sc := NewSailThruClient(&mc, c)
-	resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
+
+	fields := map[string]map[string]interface{}{"vars": {"user_id": 1}}
+
+	resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", fields, "json")
 	if err != nil {
 		t.Error(err)
+		t.FailNow()
 	}
 	if resp.JobID != expectedJobID {
 		t.Errorf("Expected %v, got %v\n", expectedJobID, resp.JobID)
@@ -54,8 +58,8 @@ func TestCreateInvalidJobType(t *testing.T) {
 	mc := NewMockClient(normalJob)
 	c := getTestConfig()
 	sc := NewSailThruClient(&mc, c)
-
-	_, err := sc.CreateJob("invalid_job_type", "ad_hoc_test_list_1", "json")
+	fields := map[string]map[string]interface{}{"vars": {"user_id": 1}}
+	_, err := sc.CreateJob("invalid_job_type", "ad_hoc_test_list_1", fields, "json")
 	if err == nil {
 		t.Errorf("Expected %v, got %v\n", expectedErrorStr, nil)
 	} else {
