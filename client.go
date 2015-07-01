@@ -126,18 +126,13 @@ func (sc *SailThruClient) CreateJob(jobType string, listName string, format stri
 	}
 	posturl := fmt.Sprintf(apiURLPost, sc.baseURL, "job", format)
 	/*
-			{
-		   "job":"export_list_data",
-		   "list":"adhoc_3",
-		   "fields":{
-		      "vars":{
-		         "user_id":1
-		      }
-		   }
-		}
+		  TODO:
+			vars needs a different name
+			fieldValues needs to be injected form the CreateJob, not hard coded here.
 	*/
 	vars := map[string]int{"user_id": 1}
 	fieldValues := map[string]map[string]int{"vars": vars}
+
 	items := map[string]interface{}{"job": jobType, "list": listName, "fields": fieldValues}
 	form := sc.getPostForm(items)
 	req, reqErr := http.NewRequest("POST", posturl, bytes.NewBufferString(form.Encode()))
