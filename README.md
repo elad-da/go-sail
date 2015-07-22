@@ -44,7 +44,20 @@ Create a Job:
 ----------
 
 ```go
-resp, err := sc.CreateJob("export_list_data", "ad_hoc_test_list_1", "json")
+
+ //Job method to use from the SailThru API https://getstarted.sailthru.com/new-for-developers-overview/reporting/job/#export_list_data
+jobtype := "export_list_data"
+
+//The name of the sailthru list to create the job for
+listname := "demo_list_1"
+
+//The custom variables you want to be returned in the CSV.  These variables must exist in the list
+vars := map[string]int{"user_id": 1}
+
+//The response format
+format := "json"
+
+resp, err := sc.CreateJob(jobtype, listname, vars, format)
 ```
 
 The `resp` struct has the following properties:
